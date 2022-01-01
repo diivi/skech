@@ -1,6 +1,7 @@
-<script>
-    import '../styles/globals.scss'
+<script lang="ts">
+	import '../styles/globals.scss';
 </script>
+
 <main>
-    <slot/>
+	<slot />
 </main>
