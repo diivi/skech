@@ -1,34 +1,27 @@
 <script lang="ts">
 	import { io, Socket } from 'socket.io-client';
 	import { onMount } from 'svelte';
+	import Draw from '../components/draw.svelte';
+	import Chat from '../components/chat.svelte';
+	let ready = false;
 	let socket: Socket;
-	let text = 'Type Something Here...';
-	let messages = [];
-
 	onMount(() => {
 		socket = io('http://localhost:5000');
 		socket.on('connect_error', (err) => {
 			console.log(`connect_error due to ${err.message}`);
 		});
-		socket.on('message', (message: string) => {
-			messages = [...messages, message];
-		});
+		ready = true;
 	});
-
-	const sendMessage = (message: string) => {
-		socket.emit('message', message);
-	};
 </script>
 
-<main>
-	<ul>
-		{#each messages as message}
-			<li>{message}</li>
-		{/each}
-		<input type="text" bind:value={text} />
-		<button on:click={() => sendMessage(text)}> Send </button>
-	</ul>
-</main>
+{#if ready}
+	<section>
+		<Draw {socket} />
+		<Chat {socket} />
+	</section>
+{:else}
+	<p>Loading...</p>
+{/if}
 
 <style>
 </style>
