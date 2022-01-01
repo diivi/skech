@@ -28,9 +28,9 @@
 		}
 	};
 </script>
-
+<section>
 <h1>draw</h1>
 <P5 {...sketch} />
-
+</section>
 <style>
 </style>
