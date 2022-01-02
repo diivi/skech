@@ -6,3 +6,4 @@
 		goto(`/play/${uuid()}`);
 	});
 </script>
+

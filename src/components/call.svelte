@@ -1,10 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	export let socket;
-	export let peer;
+	 let peer;
 	export let enableAudio;
 	export let enableVideo;
+
 	const peers = {};
 	let localStream;
 	import { fakeMediaStream } from '../utils/fakeMediaStream.js';
@@ -38,6 +40,7 @@
 			});
 	}
 	function addVideoStream(video, stream) {
+		console.log('addVideoStream');
 		video.srcObject = stream;
 		video.addEventListener('loadedmetadata', () => {
 			video.play();
@@ -46,6 +49,7 @@
 		videoGrid.append(video);
 	}
 	function connectToNewUser(userId, stream) {
+		console.log('connectToNewUser');
 		let call = peer.call(userId, stream);
 		const video = document.createElement('video');
 		call.on('stream', (remoteStream) => {
@@ -56,13 +60,22 @@
 		});
 		peers[userId] = call;
 	}
-	onMount(() => {
+	onMount(async () => {
+		let Peer = (await import('peerjs')).default;
+		peer = new Peer();
+		peer.on('open', (id) => {
+			socket.emit('join-room', {
+				roomId: $page.params.room,
+				userId: id
+			});
+		});
 		if (enableAudio || enableVideo) {
 			start();
 		} else {
 			fakeStart();
 		}
 		socket.on('user-connected', (userId) => {
+			console.log('userId', userId)
 			connectToNewUser(userId, localStream);
 		});
 		socket.on('user-disconnected', (userId) => {
