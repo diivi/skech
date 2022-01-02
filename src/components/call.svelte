@@ -3,11 +3,12 @@
 	import { page } from '$app/stores';
 
 	export let socket;
-	 let peer;
 	export let enableAudio;
 	export let enableVideo;
+	export let name;
 
 	const peers = {};
+	let peer;
 	let localStream;
 	import { fakeMediaStream } from '../utils/fakeMediaStream.js';
 
@@ -66,7 +67,8 @@
 		peer.on('open', (id) => {
 			socket.emit('join-room', {
 				roomId: $page.params.room,
-				userId: id
+				userId: id,
+				name: name
 			});
 		});
 		if (enableAudio || enableVideo) {
@@ -75,7 +77,7 @@
 			fakeStart();
 		}
 		socket.on('user-connected', (userId) => {
-			console.log('userId', userId)
+			console.log('userId', userId);
 			connectToNewUser(userId, localStream);
 		});
 		socket.on('user-disconnected', (userId) => {
@@ -98,6 +100,7 @@
 
 <section>
 	<div id="video-grid">
+		<h1>Hi {name}</h1>
 		<h1>Join Call</h1>
 		<button on:click={stop}>Stop Video</button>
 		<button on:click={start}>Start Video</button>

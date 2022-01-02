@@ -8,7 +8,7 @@
 
 	let ready = false;
 	let socket: Socket;
-
+	let name = '';
 	let enableAudio = true;
 	let enableVideo = true;
 	let start = false;
@@ -33,6 +33,7 @@
 		<input type="checkbox" name="video" bind:checked={enableVideo} />
 		<label for="video">Video</label>
 		<br />
+		<input type="text" placeholder="enter name" bind:value={name} />
 		<button
 			on:click={() => {
 				start = true;
@@ -42,9 +43,9 @@
 		</button>
 	{:else}
 		<section>
-			<Call {socket} {enableAudio} {enableVideo} />
+			<Call {name} {socket} {enableAudio} {enableVideo} />
 			<Draw {socket} />
-			<Chat {socket} />
+			<Chat {name}  {socket} />
 		</section>
 	{/if}
 {:else}
