@@ -10,6 +10,11 @@
 	let ready = false;
 	let socket: Socket;
 	let peer;
+
+	let enableAudio = true;
+	let enableVideo = true;
+	let start = false;
+
 	onMount(async () => {
 		let Peer = (await import('peerjs')).default;
 
@@ -34,11 +39,29 @@
 </script>
 
 {#if ready}
+	<!-- {#if !start}
+		<h1>Settings</h1>
+		<label for="video">
+			<input type="checkbox" name="video" bind:checked={enableVideo} />
+			<p>Video</p>
+		</label>
+		<label for="audio">
+			<input type="checkbox" name="audio" bind:checked={enableAudio} />
+			<p>Audio</p>
+		</label>
+		<br />
+		<button
+			on:click={() => {
+				start = true;
+			}}>Start</button
+		>
+	{:else} -->
 	<section>
-		<Call {socket} {peer}/>
+		<Call {socket} {peer} {enableAudio} {enableVideo} />
 		<Draw {socket} />
 		<Chat {socket} />
 	</section>
+	<!-- {/if} -->
 {:else}
 	<p>Loading...</p>
 {/if}
