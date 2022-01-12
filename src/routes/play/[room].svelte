@@ -13,8 +13,9 @@
 	let enableVideo = true;
 	let start = false;
 
-	onMount(async () => {
-		socket = io('http://localhost:5000');
+	onMount(() => {
+		const server_url = import.meta.env.VITE_SERVER_URL as string;
+		socket = io(server_url);
 		socket.on('connect_error', (err) => {
 			console.log(`connect_error due to ${err.message}`);
 		});
@@ -45,7 +46,7 @@
 		<section>
 			<Call {name} {socket} {enableAudio} {enableVideo} />
 			<Draw {socket} />
-			<Chat {name}  {socket} />
+			<Chat {name} {socket} />
 		</section>
 	{/if}
 {:else}

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
@@ -10,7 +10,7 @@
 	const peers = {};
 	let peer;
 	let localStream;
-	import { fakeMediaStream } from '../utils/fakeMediaStream.js';
+	let fakeMediaStream;
 
 	function fakeStart() {
 		localStream = fakeMediaStream;
@@ -62,8 +62,28 @@
 		peers[userId] = call;
 	}
 	onMount(async () => {
+		fakeMediaStream = await import('../utils/fakeMediaStream.js');
 		let Peer = (await import('peerjs')).default;
-		peer = new Peer();
+		//@ts-ignore
+		peer = new Peer({
+			host: 'skech-peer-server.herokuapp.com',
+			path: '/peerjs',
+			port: 443,
+			secure: true,
+			debug: 3,
+			config: {
+				iceServers: [
+					{
+						url: 'stun:stun.l.google.com:19302'
+					},
+					{
+						url: 'turn:numb.viagenie.ca',
+						username: import.meta.env.VITE_TURN_USERNAME as string,
+						credential: import.meta.env.VITE_TURN_PASSWORD as string
+					}
+				]
+			}
+		});
 		peer.on('open', (id) => {
 			socket.emit('join-room', {
 				roomId: $page.params.room,
@@ -95,7 +115,7 @@
 				video.remove();
 			});
 		});
-	});
+});
 </script>
 
 <section>

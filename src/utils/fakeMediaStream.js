@@ -1,4 +1,5 @@
 const createEmptyAudioTrack = () => {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
 	const ctx = new AudioContext();
 	const oscillator = ctx.createOscillator();
 	const dst = oscillator.connect(ctx.createMediaStreamDestination());
