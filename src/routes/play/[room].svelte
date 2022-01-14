@@ -4,13 +4,10 @@
 
 	import Draw from '../../components/draw.svelte';
 	import Chat from '../../components/chat.svelte';
-	import Call from '../../components/call.svelte';
 
 	let ready = false;
 	let socket: Socket;
 	let name = '';
-	let enableAudio = true;
-	let enableVideo = true;
 	let start = false;
 
 	onMount(() => {
@@ -29,11 +26,6 @@
 
 {#if ready}
 	{#if !start}
-		<input type="checkbox" bind:checked={enableAudio} />
-		<label for="audio">Audio</label>
-		<input type="checkbox" name="video" bind:checked={enableVideo} />
-		<label for="video">Video</label>
-		<br />
 		<input type="text" placeholder="enter name" bind:value={name} />
 		<button
 			on:click={() => {
@@ -44,7 +36,6 @@
 		</button>
 	{:else}
 		<section>
-			<Call {name} {socket} {enableAudio} {enableVideo} />
 			<Draw {socket} />
 			<Chat {name} {socket} />
 		</section>
