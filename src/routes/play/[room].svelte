@@ -1,32 +1,36 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+
 	import { io, Socket } from 'socket.io-client';
 	import { onMount } from 'svelte';
+	import { user } from '../../stores/stores';
 
-	import Draw from '../../components/draw.svelte';
-	import Chat from '../../components/chat.svelte';
+	import Game from '../../components/game.svelte';
+	import { goto } from '$app/navigation';
 
 	let ready = false;
 	let socket: Socket;
-	let name = '';
+	let roomId = $page.params.room;
+
 	let start = false;
 
 	onMount(() => {
-		const server_url = import.meta.env.VITE_SERVER_URL as string;
-		socket = io(server_url);
-		socket.on('connect_error', (err) => {
-			console.log(`connect_error due to ${err.message}`);
-		});
-
-		socket.on('user-connected', (user) => {
-			console.log(`user ${user} connected`);
-		});
-		ready = true;
+		if (!$user.name) {
+			user.set({ name: '', roomId });
+			goto('/');
+		} else {
+			const server_url = import.meta.env.VITE_SERVER_URL as string;
+			socket = io(server_url);
+			socket.on('connect_error', (err) => {
+				console.log(`connect_error due to ${err.message}`);
+			});
+			ready = true;
+		}
 	});
 </script>
 
 {#if ready}
 	{#if !start}
-		<input type="text" placeholder="enter name" bind:value={name} />
 		<button
 			on:click={() => {
 				start = true;
@@ -35,10 +39,7 @@
 			Start
 		</button>
 	{:else}
-		<section>
-			<Draw {socket} />
-			<Chat {name} {socket} />
-		</section>
+		<Game {socket} {name} room={roomId} />
 	{/if}
 {:else}
 	<p>Loading...</p>
