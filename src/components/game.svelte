@@ -8,6 +8,13 @@
 </script>
 
 <section>
-	<Draw {socket} />
-	<Chat {name} {socket} />
+	<div class="chat-draw">
+		<Draw {socket} />
+		<Chat {name} {socket} />
+	</div>
 </section>
+<style>
+.chat-draw{
+	display: flex;
+}
+</style>
