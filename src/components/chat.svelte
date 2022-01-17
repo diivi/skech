@@ -16,8 +16,27 @@
 	socket.on('message', (message: Message) => {
 		messages = [...messages, message];
 	});
+
+	const validateMessage = () => {
+		message.text = message.text.trim();
+		if (message.text == '' || message.text.length > 50) {
+			return false;
+		} else {
+			return true;
+		}
+	};
 	const sendMessage = () => {
-		socket.emit('message', message);
+		if (validateMessage()) {
+			socket.emit('message', message);
+			message.text = '';
+		} else {
+			alert('Enter a valid message');
+		}
+	};
+	const checkKey = (e) => {
+		if (e.charCode === 13) {
+			sendMessage();
+		}
 	};
 	socket.on('user-connected', (user) => {
 		const message = 'has joined the game';
@@ -30,12 +49,27 @@
 </script>
 
 <section>
-	<ul>
-		<h1>chat</h1>
+	<h1>chat</h1>
+	<ul id="chatBox">
 		{#each messages as message}
 			<li><b>{message.from}</b> {message.text}</li>
 		{/each}
-		<input type="text" bind:value={message.text} placeholder="Type something here..." />
-		<button on:click={() => sendMessage()}> Send </button>
 	</ul>
+	<input
+		type="text"
+		bind:value={message.text}
+		placeholder="Type something here..."
+		on:keypress={checkKey}
+	/>
+	<button on:click={() => sendMessage()}> Send </button>
 </section>
+
+<style>
+	section {
+		height: 50vh;
+	}
+	ul {
+		height: 100%;
+		overflow: auto;
+	}
+</style>
